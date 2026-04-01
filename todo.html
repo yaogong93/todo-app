@@ -1,0 +1,4162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>每天一个小目标</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: #f5f7fa;
+      color: #2c3e50;
+      line-height: 1.6;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 32px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header .stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 16px;
+      font-size: 1rem;
+    }
+
+    .header .stat {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 20px;
+      border-radius: 20px;
+    }
+
+    .header .stat span {
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .nav-btn {
+      padding: 8px 16px;
+      background: white;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .nav-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .nav-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #764ba2;
+    }
+
+    /* Section */
+    .section {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    .section-header h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    /* Subsection */
+    .subsection {
+      margin-bottom: 24px;
+    }
+
+    .subsection:last-child {
+      margin-bottom: 0;
+    }
+
+    .subsection-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .subsection h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #34495e;
+    }
+
+    .subsection-desc {
+      font-size: 0.85rem;
+      color: #7f8c8d;
+      margin-bottom: 12px;
+      padding-left: 28px;
+    }
+
+    /* Progress bar */
+    .progress-container {
+      margin-bottom: 16px;
+      padding-left: 4px;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: #ecf0f1;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 0.75rem;
+      color: #95a5a6;
+      margin-top: 4px;
+    }
+
+    /* Todo items */
+    .todo-list {
+      list-style: none;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .todo-item:hover {
+      background: #f8f9fa;
+    }
+
+    .todo-item.completed {
+      opacity: 0.6;
+    }
+
+    /* Sortable drag styles */
+    .todo-item.sortable-ghost {
+      opacity: 0.4;
+      background: #e8f4fd;
+      border: 2px dashed #667eea;
+    }
+
+    .todo-item.sortable-drag {
+      opacity: 1;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transform: scale(1.02);
+    }
+
+    .todo-item.sortable-chosen {
+      cursor: grabbing;
+    }
+
+    body.dark-mode .todo-item.sortable-ghost {
+      background: #1a365d;
+      border-color: #667eea;
+    }
+
+    body.dark-mode .todo-item.sortable-drag {
+      background: #16213e;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .todo-item.completed .todo-text {
+      text-decoration: line-through;
+      color: #95a5a6;
+    }
+
+    .todo-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .todo-date {
+      font-size: 0.75rem;
+      color: #3498db;
+      background: #e8f4fd;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .todo-item.completed .todo-date {
+      opacity: 0.5;
+    }
+
+    /* Priority styles */
+    .todo-priority {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .priority-high {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .priority-medium {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .priority-low {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .priority-indicator {
+      width: 4px;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-radius: 10px 0 0 10px;
+    }
+
+    .todo-wrapper {
+      position: relative;
+    }
+
+    .todo-wrapper .priority-indicator.priority-high {
+      background: #dc2626;
+    }
+
+    .todo-wrapper .priority-indicator.priority-medium {
+      background: #d97706;
+    }
+
+    .todo-wrapper .priority-indicator.priority-low {
+      background: #059669;
+    }
+
+    body.dark-mode .priority-high {
+      background: #7f1d1d;
+      color: #fca5a5;
+    }
+
+    body.dark-mode .priority-medium {
+      background: #78350f;
+      color: #fcd34d;
+    }
+
+    body.dark-mode .priority-low {
+      background: #064e3b;
+      color: #6ee7b7;
+    }
+
+    /* Custom section styles */
+    .section[id^="custom_"] .section-icon {
+      background: #9b59b6;
+    }
+
+    .checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid #dcdfe6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: all 0.2s;
+    }
+
+    .todo-item.completed .checkbox {
+      background: #27ae60;
+      border-color: #27ae60;
+    }
+
+    .checkbox svg {
+      width: 14px;
+      height: 14px;
+      fill: white;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .todo-item.completed .checkbox svg {
+      opacity: 1;
+    }
+
+    .todo-text {
+      flex: 1;
+      font-size: 0.95rem;
+      color: #2c3e50;
+    }
+
+    /* Notes section */
+    .notes {
+      background: #fef9e7;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      color: #7d6608;
+    }
+
+    .notes ol, .notes ul {
+      margin-left: 20px;
+      margin-top: 8px;
+    }
+
+    .notes li {
+      margin-bottom: 4px;
+    }
+
+    .notes code {
+      background: #fdebd0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* Code block */
+    .code-block {
+      background: #2c3e50;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      color: #ecf0f1;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Links */
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #667eea;
+      transition: all 0.2s;
+    }
+
+    .link-item:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .link-item svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: #e0e0e0;
+    }
+
+    .timeline-month {
+      margin-bottom: 16px;
+    }
+
+    .timeline-month-title {
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .timeline-month-title::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 8px;
+      width: 10px;
+      height: 10px;
+      background: #667eea;
+      border-radius: 50%;
+    }
+
+    .timeline-item {
+      font-size: 0.9rem;
+      color: #5a6c7d;
+      padding: 4px 0;
+      padding-left: 8px;
+      border-left: 2px solid #e8e8e8;
+      margin-left: 4px;
+    }
+
+    /* Filter buttons */
+    .filter-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border: 2px solid #e0e0e0;
+      background: white;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #666;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      border-color: #667eea;
+      background: #667eea;
+      color: white;
+    }
+
+    .priority-filter {
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .priority-filter .priority-dot {
+      width: 12px;
+      height: 12px;
+    }
+
+    .priority-filter.active .priority-dot {
+      box-shadow: 0 0 0 2px white;
+    }
+
+    /* Responsive */
+    .search-container {
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: #f0f0f0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .search-toggle:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .search-toggle svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .search-input-wrapper {
+      position: absolute;
+      right: 44px;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      transform: translateX(10px);
+      pointer-events: none;
+      transition: all 0.2s;
+    }
+
+    .search-input-wrapper.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .search-input {
+      width: 200px;
+      padding: 8px 32px 8px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #667eea;
+      width: 260px;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 8px;
+      background: #ccc;
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      cursor: pointer;
+      font-size: 10px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .search-clear.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .search-clear:hover {
+      background: #999;
+    }
+
+    .highlight {
+      background-color: #ffe082;
+      color: #333;
+      border-radius: 2px;
+      padding: 0 2px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: #95a5a6;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .no-results svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      fill: currentColor;
+      opacity: 0.5;
+    }
+
+    body.dark-mode .search-toggle {
+      background: #16213e;
+      color: #888;
+    }
+
+    body.dark-mode .search-toggle:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    body.dark-mode .search-input {
+      background: #0f3460;
+      border-color: #3a4a6b;
+      color: #eaeaea;
+    }
+
+    body.dark-mode .search-input:focus {
+      border-color: #667eea;
+    }
+
+    body.dark-mode .highlight {
+      background-color: #b7950b;
+      color: #fff;
+    }
+
+    body.dark-mode .search-clear {
+      background: #3a4a6b;
+      color: #eaeaea;
+    }
+
+    body.dark-mode .search-clear:hover {
+      background: #555;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .header .stats {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .section {
+        padding: 16px;
+      }
+    }
+
+    /* Color themes */
+    .bg-purple { background: #667eea; }
+    .bg-blue { background: #3498db; }
+    .bg-green { background: #27ae60; }
+    .bg-orange { background: #f39c12; }
+    .bg-red { background: #e74c3c; }
+    .bg-teal { background: #1abc9c; }
+    .bg-pink { background: #e91e63; }
+
+    .fill-purple { background: #667eea; }
+    .fill-blue { background: #3498db; }
+    .fill-green { background: #27ae60; }
+    .fill-orange { background: #f39c12; }
+
+    /* Floating Action Button */
+    .fab {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 6px 28px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    /* Modal */
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      width: 90%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      animation: modalIn 0.3s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal h2 {
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #95a5a6;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: #e74c3c;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #34495e;
+      margin-bottom: 8px;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus {
+      border-color: #667eea;
+    }
+
+    .priority-select {
+      display: flex;
+      gap: 8px;
+    }
+
+    .priority-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .priority-btn:hover {
+      border-color: #667eea;
+    }
+
+    .priority-btn.active {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .priority-btn[data-priority="high"].active {
+      border-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .priority-btn[data-priority="medium"].active {
+      border-color: #d97706;
+      background: #fffbeb;
+    }
+
+    .priority-btn[data-priority="low"].active {
+      border-color: #059669;
+      background: #ecfdf5;
+    }
+
+    .priority-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .priority-dot.high {
+      background: #dc2626;
+    }
+
+    .priority-dot.medium {
+      background: #d97706;
+    }
+
+    .priority-dot.low {
+      background: #059669;
+    }
+
+    body.dark-mode .priority-btn {
+      background: #16213e;
+      border-color: #3a4a6b;
+      color: #eaeaea;
+    }
+
+    body.dark-mode .priority-btn:hover {
+      border-color: #667eea;
+    }
+
+    body.dark-mode .priority-btn.active {
+      background: #0f3460;
+    }
+
+    body.dark-mode .priority-btn[data-priority="high"].active {
+      border-color: #dc2626;
+      background: #7f1d1d;
+    }
+
+    body.dark-mode .priority-btn[data-priority="medium"].active {
+      border-color: #d97706;
+      background: #78350f;
+    }
+
+    body.dark-mode .priority-btn[data-priority="low"].active {
+      border-color: #059669;
+      background: #064e3b;
+    }
+
+    .new-input-wrapper {
+      margin-top: 8px;
+      animation: slideDown 0.2s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .new-input-wrapper input {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .input-hint {
+      display: block;
+      font-size: 0.75rem;
+      color: #667eea;
+      margin-top: 4px;
+      padding-left: 4px;
+    }
+
+    .form-group select {
+      cursor: pointer;
+      background: white;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    /* Delete button */
+    .delete-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: #ccc;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .todo-item:hover .delete-btn {
+      opacity: 1;
+    }
+
+    .delete-btn:hover {
+      background: #fee;
+      color: #e74c3c;
+    }
+
+    .delete-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* Fold toggle arrow */
+    .fold-toggle {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: #95a5a6;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .fold-toggle:hover {
+      background: #f0f0f0;
+      color: #667eea;
+    }
+
+    .fold-toggle svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      transition: transform 0.3s ease;
+    }
+
+    .fold-toggle.collapsed svg {
+      transform: rotate(-90deg);
+    }
+
+    /* Section/Subsection header delete button */
+    .header-delete-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: #ccc;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .section-header:hover .header-delete-btn,
+    .subsection-header:hover .header-delete-btn {
+      opacity: 1;
+    }
+
+    .header-delete-btn:hover {
+      background: #fee;
+      color: #e74c3c;
+    }
+
+    .header-delete-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* Collapsed state */
+    .section.collapsed .subsection,
+    .section.collapsed .todo-list,
+    .section.collapsed .notes,
+    .section.collapsed .code-block,
+    .section.collapsed .timeline,
+    .section.collapsed .link-list,
+    .section.collapsed .progress-container {
+      display: none;
+    }
+
+    .subsection.collapsed .todo-list,
+    .subsection.collapsed .notes,
+    .subsection.collapsed .progress-container,
+    .subsection.collapsed .subsection-desc {
+      display: none;
+    }
+
+    /* Section header clickable area */
+    .section-header {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .subsection-header {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header h2,
+    .subsection-header h3 {
+      pointer-events: none;
+    }
+
+    /* Custom todo badge */
+    .custom-badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #e8f4fd;
+      color: #3498db;
+      margin-left: 8px;
+    }
+
+    /* Undo toast */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2c3e50;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      z-index: 300;
+      display: none;
+      animation: toastIn 0.3s ease;
+    }
+
+    .toast.active {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    .toast button {
+      background: #667eea;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255,255,255,0.3);
+      transform: rotate(15deg);
+    }
+
+    .theme-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background: #1a1a2e;
+      color: #eaeaea;
+    }
+
+    body.dark-mode .header {
+      background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+    }
+
+    body.dark-mode .section {
+      background: #16213e;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    body.dark-mode .section-header {
+      border-bottom-color: #0f3460;
+    }
+
+    body.dark-mode .section-header h2,
+    body.dark-mode .subsection-header h3 {
+      color: #eaeaea;
+    }
+
+    body.dark-mode .todo-item:hover {
+      background: #0f3460;
+    }
+
+    body.dark-mode .todo-text {
+      color: #eaeaea;
+    }
+
+    body.dark-mode .checkbox {
+      border-color: #3a4a6b;
+    }
+
+    body.dark-mode .nav-btn {
+      background: #16213e;
+      color: #667eea;
+    }
+
+    body.dark-mode .nav-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    body.dark-mode .nav-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #9b59b6;
+    }
+
+    body.dark-mode .filter-btn {
+      background: #16213e;
+      border-color: #3a4a6b;
+      color: #aaa;
+    }
+
+    body.dark-mode .filter-btn:hover,
+    body.dark-mode .filter-btn.active {
+      border-color: #667eea;
+      background: #667eea;
+      color: white;
+    }
+
+    body.dark-mode .progress-bar {
+      background: #0f3460;
+    }
+
+    body.dark-mode .progress-text {
+      color: #888;
+    }
+
+    body.dark-mode .notes {
+      background: #0f3460;
+      color: #f0c040;
+    }
+
+    body.dark-mode .notes code {
+      background: #16213e;
+    }
+
+    body.dark-mode .code-block {
+      background: #0a0a1a;
+    }
+
+    body.dark-mode .link-item {
+      background: #0f3460;
+      color: #667eea;
+    }
+
+    body.dark-mode .link-item:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    body.dark-mode .timeline::before {
+      background: #3a4a6b;
+    }
+
+    body.dark-mode .timeline-month-title {
+      color: #667eea;
+    }
+
+    body.dark-mode .timeline-month-title::before {
+      background: #667eea;
+    }
+
+    body.dark-mode .timeline-item {
+      color: #aaa;
+      border-left-color: #3a4a6b;
+    }
+
+    body.dark-mode .modal {
+      background: #16213e;
+    }
+
+    body.dark-mode .modal h2 {
+      color: #eaeaea;
+    }
+
+    body.dark-mode .modal-close {
+      color: #888;
+    }
+
+    body.dark-mode .form-group label {
+      color: #ccc;
+    }
+
+    body.dark-mode .form-group select,
+    body.dark-mode .form-group input {
+      background: #0f3460;
+      border-color: #3a4a6b;
+      color: #eaeaea;
+    }
+
+    body.dark-mode .form-group select:focus,
+    body.dark-mode .form-group input:focus {
+      border-color: #667eea;
+    }
+
+    body.dark-mode .btn-secondary {
+      background: #0f3460;
+      color: #ccc;
+    }
+
+    body.dark-mode .btn-secondary:hover {
+      background: #16213e;
+    }
+
+    body.dark-mode .fold-toggle {
+      color: #888;
+    }
+
+    body.dark-mode .fold-toggle:hover {
+      background: #0f3460;
+      color: #667eea;
+    }
+
+    body.dark-mode .delete-btn {
+      color: #666;
+    }
+
+    body.dark-mode .delete-btn:hover {
+      background: #3a1a1a;
+      color: #e74c3c;
+    }
+
+    body.dark-mode .header-delete-btn {
+      color: #666;
+    }
+
+    body.dark-mode .header-delete-btn:hover {
+      background: #3a1a1a;
+      color: #e74c3c;
+    }
+
+    body.dark-mode .toast {
+      background: #16213e;
+    }
+
+    body.dark-mode .todo-date {
+      background: #0f3460;
+      color: #667eea;
+    }
+
+    body.dark-mode .subsection-desc {
+      color: #888;
+    }
+
+    body.dark-mode .input-hint {
+      color: #667eea;
+    }
+
+    body.dark-mode .new-input-wrapper input {
+      background: #0f3460;
+      border-color: #667eea;
+    }
+
+    body.dark-mode .custom-badge {
+      background: #0f3460;
+      color: #667eea;
+    }
+
+    body.dark-mode .header .stat {
+      background: rgba(255,255,255,0.1);
+    }
+
+    body.dark-mode footer,
+    body.dark-mode div[style*="text-align: center"][style*="padding: 24px"] {
+      color: #666;
+    }
+
+    body.dark-mode div[style*="text-align: center"] button {
+      background: #16213e;
+      border-color: #3a4a6b;
+      color: #aaa;
+    }
+
+    body.dark-mode div[style*="text-align: center"] button:hover {
+      background: #0f3460;
+      border-color: #667eea;
+      color: #667eea;
+    }
+    /* Notes Feature Styles */
+    /* Container for the todo item and its notes */
+    .todo-wrapper {
+      margin-bottom: 6px;
+      transition: all 0.2s;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      margin-bottom: 0; /* Remove margin from item as it's handled by wrapper */
+    }
+
+    .todo-item:hover {
+      background: #f8f9fa;
+    }
+
+    /* Override for dark mode */
+    body.dark-mode .todo-item:hover {
+      background: #0f3460;
+    }
+
+    /* The notes container, hidden by default */
+    .todo-notes-container {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                  opacity 0.3s ease, 
+                  transform 0.3s ease,
+                  margin 0.3s ease,
+                  padding 0.3s ease;
+      background-color: transparent;
+      margin-left: 48px; /* Align with text, skipping checkbox */
+      margin-right: 16px;
+      border-left: 2px solid transparent;
+    }
+
+    /* Expanded state for notes */
+    .todo-wrapper.expanded .todo-notes-container {
+      max-height: 500px; /* Large enough to fit content */
+      opacity: 1;
+      transform: translateY(0);
+      margin-bottom: 12px;
+      padding: 4px 0 8px 12px;
+      border-left-color: #e0e0e0;
+    }
+    
+    body.dark-mode .todo-wrapper.expanded .todo-notes-container {
+      border-left-color: #3a4a6b;
+    }
+
+    /* Highlight the parent item when expanded */
+    .todo-wrapper.expanded .todo-item {
+      background: #f8f9fa;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    body.dark-mode .todo-wrapper.expanded .todo-item {
+      background: #0f3460;
+    }
+
+    /* Notes Textarea */
+    .todo-notes-textarea {
+      width: 100%;
+      min-height: 60px;
+      border: 1px dashed transparent;
+      background: transparent;
+      color: #7f8c8d;
+      font-family: inherit;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+      transition: all 0.2s;
+      padding: 8px;
+      border-radius: 6px;
+      display: block;
+    }
+
+    body.dark-mode .todo-notes-textarea {
+      color: #aaa;
+    }
+
+    .todo-notes-textarea:hover {
+      border-color: #e0e0e0;
+      background: rgba(0,0,0,0.02);
+    }
+
+    body.dark-mode .todo-notes-textarea:hover {
+      border-color: #3a4a6b;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .todo-notes-textarea:focus {
+      border-color: #667eea;
+      background: white;
+      color: #2c3e50;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      border-style: solid;
+    }
+
+    body.dark-mode .todo-notes-textarea:focus {
+      background: #16213e;
+      color: #eaeaea;
+    }
+
+    .todo-notes-textarea::placeholder {
+      color: #95a5a6;
+      opacity: 0.7;
+    }
+
+    /* Notes Indicator Icon */
+    .notes-indicator {
+      opacity: 0;
+      transition: opacity 0.2s, color 0.2s;
+      margin-left: 8px;
+      color: #95a5a6;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .notes-indicator:hover {
+      background-color: rgba(0,0,0,0.05);
+      color: #667eea;
+    }
+
+    body.dark-mode .notes-indicator:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+
+    .todo-item:hover .notes-indicator {
+      opacity: 1;
+    }
+
+    /* Always show if it has content or is expanded */
+    .notes-indicator.has-notes,
+    .todo-wrapper.expanded .notes-indicator {
+      opacity: 1;
+    }
+
+    .notes-indicator.has-notes {
+      color: #667eea; /* Active color */
+    }
+    
+    .todo-item.completed .notes-indicator {
+      opacity: 0.5; /* Fade out for completed items */
+    }
+
+    .notes-indicator svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Rendered Markdown Notes Styles */
+    .todo-notes-rendered {
+      width: 100%;
+      padding: 12px;
+      border: 1px dashed transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 40px;
+    }
+
+    .todo-notes-rendered:hover {
+      border-color: #e0e0e0;
+      background: rgba(0,0,0,0.02);
+    }
+
+    body.dark-mode .todo-notes-rendered {
+      color: #aaa;
+    }
+
+    body.dark-mode .todo-notes-rendered:hover {
+      border-color: #3a4a6b;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .todo-notes-rendered h1,
+    .todo-notes-rendered h2,
+    .todo-notes-rendered h3 {
+      margin: 8px 0 4px;
+      color: #2c3e50;
+      font-size: 1em;
+    }
+
+    body.dark-mode .todo-notes-rendered h1,
+    body.dark-mode .todo-notes-rendered h2,
+    body.dark-mode .todo-notes-rendered h3 {
+      color: #eaeaea;
+    }
+
+    .todo-notes-rendered p {
+      margin: 4px 0;
+    }
+
+    .todo-notes-rendered ul,
+    .todo-notes-rendered ol {
+      margin: 4px 0 4px 20px;
+    }
+
+    .todo-notes-rendered li {
+      margin: 2px 0;
+    }
+
+    .todo-notes-rendered code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    body.dark-mode .todo-notes-rendered code {
+      background: #16213e;
+    }
+
+    .todo-notes-rendered pre {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 8px 0;
+    }
+
+    .todo-notes-rendered pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    .todo-notes-rendered blockquote {
+      border-left: 3px solid #667eea;
+      padding-left: 12px;
+      margin: 8px 0;
+      color: #666;
+    }
+
+    body.dark-mode .todo-notes-rendered blockquote {
+      border-left-color: #667eea;
+      color: #888;
+    }
+
+    .todo-notes-rendered a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .todo-notes-rendered a:hover {
+      text-decoration: underline;
+    }
+
+    .todo-notes-rendered strong {
+      color: #2c3e50;
+    }
+
+    body.dark-mode .todo-notes-rendered strong {
+      color: #eaeaea;
+    }
+
+    .todo-notes-rendered.empty {
+      color: #95a5a6;
+      font-style: italic;
+    }
+
+    /* Edit mode: hide rendered, show textarea */
+    .todo-wrapper.editing .todo-notes-rendered {
+      display: none;
+    }
+
+    .todo-wrapper.editing .todo-notes-textarea {
+      display: block;
+    }
+
+    /* View mode: show rendered, hide textarea */
+    .todo-wrapper:not(.editing) .todo-notes-rendered {
+      display: block;
+    }
+
+    .todo-wrapper:not(.editing) .todo-notes-textarea {
+      display: none;
+    }
+
+    .todo-notes-edit-hint {
+      font-size: 0.75rem;
+      color: #95a5a6;
+      text-align: right;
+      margin-top: 4px;
+      padding-right: 8px;
+    }
+
+    body.dark-mode .todo-notes-edit-hint {
+      color: #666;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <h1>🎯 每天一个小目标 🎯</h1>
+      <div class="stats">
+        <div class="stat">已完成 <span id="completed-count">0</span></div>
+        <div class="stat">待完成 <span id="pending-count">0</span></div>
+        <div class="stat">完成率 <span id="progress-percent">0%</span></div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+      <button class="nav-btn active" data-section="all" onclick="showAllSections()">📋 全部</button>
+      <button class="nav-btn" data-section="learning" onclick="showSection('learning')">📚 学习计划</button>
+      <button class="nav-btn" data-section="work" onclick="showSection('work')">💼 工作项目</button>
+      <button class="nav-btn" data-section="problems" onclick="showSection('problems')">🔍 问题分析</button>
+      <button class="nav-btn" data-section="daily" onclick="showSection('daily')">📅 日常记录</button>
+      <button class="nav-btn" data-section="commands" onclick="showSection('commands')">⌨️ 常用命令</button>
+      <button class="nav-btn" data-section="notes" onclick="showSection('notes')">📝 技术笔记</button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-container">
+      <div class="search-wrapper">
+        <div class="search-input-wrapper" id="search-wrapper">
+          <input type="text" id="search-input" class="search-input" placeholder="搜索...">
+          <button id="search-clear" class="search-clear" title="清除搜索" onclick="clearSearch()">✕</button>
+        </div>
+        <button class="search-toggle" onclick="toggleSearch()" title="搜索 (Ctrl+F)">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="no-results" class="no-results">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      <p>没有找到匹配的待办事项</p>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <button class="filter-btn active" onclick="filterItems('all')">全部</button>
+        <button class="filter-btn" onclick="filterItems('pending')">待完成</button>
+        <button class="filter-btn" onclick="filterItems('completed')">已完成</button>
+      </div>
+      <div class="filter-group">
+        <button class="filter-btn priority-filter" onclick="filterByPriority('high')" title="高优先级">
+          <span class="priority-dot high"></span>
+        </button>
+        <button class="filter-btn priority-filter" onclick="filterByPriority('medium')" title="中优先级">
+          <span class="priority-dot medium"></span>
+        </button>
+        <button class="filter-btn priority-filter" onclick="filterByPriority('low')" title="低优先级">
+          <span class="priority-dot low"></span>
+        </button>
+        <button class="filter-btn priority-filter active" onclick="filterByPriority('all')" title="全部优先级">
+          全部
+        </button>
+      </div>
+    </div>
+
+    <!-- 一、学习计划 -->
+    <div class="section" id="learning">
+      <div class="section-header" onclick="toggleSection('learning')">
+        <button class="fold-toggle" id="learning-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+        <div class="section-icon bg-purple">📚</div>
+        <h2>学习计划</h2>
+        <button class="header-delete-btn" onclick="event.stopPropagation();deleteSection('learning')" title="删除分类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      </div>
+
+      <div class="subsection" data-subsection="1.1">
+        <div class="subsection-header" onclick="toggleSubsection('1.1')">
+          <button class="fold-toggle" id="sub-1.1-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>1.1 长期学习路线</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('learning','1.1')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-purple" style="width: 33%"></div></div>
+          <div class="progress-text">1/3 完成</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">mcts</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">mpc复习</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">transformer rl LoRA</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="subsection" data-subsection="1.2">
+        <div class="subsection-header" onclick="toggleSubsection('1.2')">
+          <button class="fold-toggle" id="sub-1.2-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>1.2 深度学习教程 (thorough pytorch)</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('learning','1.2')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="subsection-desc">学习顺序: 3 → 5 → 7 → 6 → 9 → 10 → notebook第四章</div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-purple" style="width: 90%"></div></div>
+          <div class="progress-text">9/10 完成</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">第三章看完</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">第五章看完</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">第六章看完</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">第七章看完</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">第九章看完</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">Transformer代码 + 笔记</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">ResNet代码 + 笔记</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">RNN代码 + 笔记</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">LSTM代码 + 笔记</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">Vit代码 + 笔记</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="subsection" data-subsection="1.3">
+        <div class="subsection-header" onclick="toggleSubsection('1.3')">
+          <button class="fold-toggle" id="sub-1.3-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>1.3 扩散模型学习</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('learning','1.3')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-purple" style="width: 57%"></div></div>
+          <div class="progress-text">4/7 完成</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">DDPM coding + 笔记</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">VAE笔记</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">LDMs笔记</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">StableDiffusion论文 + 笔记</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">DDIM笔记</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">DiffusionDriver论文 + 代码</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">Flow Matching了解</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="subsection" data-subsection="1.4">
+        <div class="subsection-header" onclick="toggleSubsection('1.4')">
+          <button class="fold-toggle" id="sub-1.4-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>1.4 自动驾驶端到端学习</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('learning','1.4')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="subsection-desc">学习路线: transformer → bev former && detection former → loss → train && eval</div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-purple" style="width: 25%"></div></div>
+          <div class="progress-text">1/4 完成</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">VAD_head.py</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">VAD_transformer.py</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">VADv2 paper</span>
+          </li>
+          <li class="todo-item pending" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">VADv2 code (详细看，手撕每个部分)</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="subsection" data-subsection="1.5">
+        <div class="subsection-header" onclick="toggleSubsection('1.5')">
+          <button class="fold-toggle" id="sub-1.5-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>1.5 分享准备</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('learning','1.5')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="subsection-desc">下次分享主题: <strong>ViT + Swin Transformer + DETR</strong></div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width: 100%"></div></div>
+          <div class="progress-text">3/3 完成 ✓</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">ViT论文</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">SwinTransformer代码</span>
+          </li>
+          <li class="todo-item completed" onclick="toggleTodo(this)">
+            <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <span class="todo-text">DETR代码 + 笔记补充</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 二、工作项目 -->
+    <div class="section" id="work">
+      <div class="section-header" onclick="toggleSection('work')">
+        <button class="fold-toggle" id="work-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+        <div class="section-icon bg-blue">💼</div>
+        <h2>工作项目</h2>
+        <button class="header-delete-btn" onclick="event.stopPropagation();deleteSection('work')" title="删除分类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      </div>
+
+      <div class="subsection" data-subsection="2.1">
+        <div class="subsection-header" onclick="toggleSubsection('2.1')">
+          <button class="fold-toggle" id="sub-2.1-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>电子限速 (TRS)</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('work','2.1')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-blue" style="width: 67%"></div></div>
+          <div class="progress-text">6/9 完成</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">TRS仿真验证</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">距离计算debug</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">去掉pose diff</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">限速继承策略开发</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">电子限速change完成</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">电子限速变化适配</span></li>
+          <li class="todo-item pending" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">位置跳动是否引起顿挫验证</span></li>
+          <li class="todo-item pending" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">分道TRS绑定ref line</span></li>
+          <li class="todo-item pending" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">TSR v2.0提测</span></li>
+        </ul>
+        <div class="notes">
+          <strong>限速继承策略:</strong>
+          <ol>
+            <li>有TRS使用TRS，没有则判断是否有取消</li>
+            <li>有取消，自车到取消点为原限速，取消点之后设为最大</li>
+            <li>取消限速值和原限速不匹配时，以原限速为准</li>
+          </ol>
+          <strong>限速取消判断条件:</strong>
+          <ol>
+            <li>有收费站</li>
+            <li>限速取消标志位（后缀带rev）</li>
+            <li>道路限速发生变化</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="subsection" data-subsection="2.2">
+        <div class="subsection-header" onclick="toggleSubsection('2.2')">
+          <button class="fold-toggle" id="sub-2.2-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>ISA限速显示</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('work','2.2')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width: 100%"></div></div>
+          <div class="progress-text">3/3 完成 ✓</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">完成ISA新channel</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">限速计算位置变动策略确定</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">限速位置变动开发</span></li>
+        </ul>
+      </div>
+
+      <div class="subsection" data-subsection="2.3">
+        <div class="subsection-header" onclick="toggleSubsection('2.3')">
+          <button class="fold-toggle" id="sub-2.3-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>横纵联合规划</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('work','2.3')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width: 100%"></div></div>
+          <div class="progress-text">3/3 完成 ✓</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">ilqr添加kappa buffer</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">横纵联合规划测试问题分析</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">横纵联合规划config上线</span></li>
+        </ul>
+      </div>
+
+      <div class="subsection" data-subsection="2.4">
+        <div class="subsection-header" onclick="toggleSubsection('2.4')">
+          <button class="fold-toggle" id="sub-2.4-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>变道优化</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('work','2.4')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width: 100%"></div></div>
+          <div class="progress-text">4/4 完成 ✓</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">ACC模式下效率变道不需要</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">ACC模式下不需要追gap</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">减小变道AT持续时间</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">内部道路变道推荐不需要</span></li>
+        </ul>
+      </div>
+
+      <div class="subsection" data-subsection="2.5">
+        <div class="subsection-header" onclick="toggleSubsection('2.5')">
+          <button class="fold-toggle" id="sub-2.5-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>避让临车道大车问题</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('work','2.5')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item pending" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">熟悉vehicle_cutin_decider和default_decider代码</span></li>
+        </ul>
+      </div>
+
+      <div class="subsection" data-subsection="2.6">
+        <div class="subsection-header" onclick="toggleSubsection('2.6')">
+          <button class="fold-toggle" id="sub-2.6-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>规划模块开发</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('work','2.6')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar"><div class="progress-fill fill-blue" style="width: 67%"></div></div>
+          <div class="progress-text">2/3 完成</div>
+        </div>
+        <ul class="todo-list">
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">ST图构建模块</span></li>
+          <li class="todo-item completed" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">粗轨迹模块框架</span></li>
+          <li class="todo-item pending" onclick="toggleTodo(this)"><div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="todo-text">绑路算法开发</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 三、问题分析记录 -->
+    <div class="section" id="problems">
+      <div class="section-header" onclick="toggleSection('problems')">
+        <button class="fold-toggle" id="problems-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+        <div class="section-icon bg-orange">🔍</div>
+        <h2>问题分析记录</h2>
+        <button class="header-delete-btn" onclick="event.stopPropagation();deleteSection('problems')" title="删除分类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      </div>
+
+      <div class="subsection" data-subsection="3.1">
+        <div class="subsection-header" onclick="toggleSubsection('3.1')">
+          <button class="fold-toggle" id="sub-3.1-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>3.1 高速晃动猛打问题</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('problems','3.1')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="notes">
+          <strong>根因分析:</strong>
+          <ol>
+            <li>考虑的repeller过多增大了fs_edge的cost</li>
+            <li>高速增大repeller过多</li>
+            <li>夹击场景repeller配合不好</li>
+          </ol>
+          <strong>与rc06对比:</strong>
+          <ol>
+            <li>rc06使用rl原始lane bound，onemodel-daily使用e2e lane bound（外扩约20cm）</li>
+            <li>boundary guard增大，导致fs_edge buffer增大</li>
+          </ol>
+          <strong>优化方案:</strong> 路口场景使用e2e bound，其余使用rl bound
+        </div>
+      </div>
+
+      <div class="subsection" data-subsection="3.2">
+        <div class="subsection-header" onclick="toggleSubsection('3.2')">
+          <button class="fold-toggle" id="sub-3.2-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>3.2 变道逻辑说明</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('problems','3.2')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="notes">
+          <ol>
+            <li>LaneKeep之前判断是否可以LaneChange，逻辑合理</li>
+            <li>LaneChange过程中可能触发两次变道规划（Suspend/Attempt状态）</li>
+            <li>SidePassing过程中判断是否切换到LaneChanging，最多可能规划4-5次</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- 四、日常记录 -->
+    <div class="section" id="daily">
+      <div class="section-header" onclick="toggleSection('daily')">
+        <button class="fold-toggle" id="daily-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+        <div class="section-icon bg-teal">📅</div>
+        <h2>日常记录</h2>
+        <button class="header-delete-btn" onclick="event.stopPropagation();deleteSection('daily')" title="删除分类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-month">
+          <div class="timeline-month-title">2026年 3月</div>
+          <div class="timeline-item">3.2-3.3: 限速位置变动搞定, 摸底测试问题分析</div>
+          <div class="timeline-item">3.5: 限速问题分析, 电子限速问题开发</div>
+          <div class="timeline-item">3.11-3.12: 继承限速提测, TSR v2.0, OCC过滤</div>
+        </div>
+        <div class="timeline-month">
+          <div class="timeline-month-title">2026年 2月</div>
+          <div class="timeline-item">2.3: 避让临车道大车问题分析</div>
+          <div class="timeline-item">2.24-2.27: ISA新channel, 限速位置变动策略</div>
+        </div>
+        <div class="timeline-month">
+          <div class="timeline-month-title">2026年 1月</div>
+          <div class="timeline-item">1.4-1.9: 电子限速change推进, SwinTransformer, DETR, 笔记补齐</div>
+          <div class="timeline-item">1.26: ST图构建模块, 粗轨迹模块框架</div>
+        </div>
+        <div class="timeline-month">
+          <div class="timeline-month-title">2025年 12月</div>
+          <div class="timeline-item">12.25: trs完善, DiffusionDriver代码阅读, 车钥匙/车罩/红包购买</div>
+          <div class="timeline-item">12.29: 电子限速测试结果等待, DiffusionDrive学习, ViT论文</div>
+          <div class="timeline-item">12.16-12.17: VAE完成, LDMs补充, DDPM进行中</div>
+        </div>
+        <div class="timeline-month">
+          <div class="timeline-month-title">2025年 11月</div>
+          <div class="timeline-item">11.12-11.27: 道路限速代码, LaneChangeDecider, 模型学习, RNN/LSTM</div>
+        </div>
+        <div class="timeline-month">
+          <div class="timeline-month-title">2025年 10月</div>
+          <div class="timeline-item">10.15: ilqr添加kappa buffer, 掉头change提测</div>
+        </div>
+        <div class="timeline-month">
+          <div class="timeline-month-title">2025年 9月</div>
+          <div class="timeline-item">9.3: fs_edge circle提测, 减小safety buffer, 逆向夹击优化</div>
+          <div class="timeline-item">9.15: 试驾问题分析, 线上问题解决, 横纵联合规划config上线</div>
+          <div class="timeline-item">9.17: 提测change问题, 可视化架构, 掉头change</div>
+        </div>
+        <div class="timeline-month">
+          <div class="timeline-month-title">2025年 8月</div>
+          <div class="timeline-item">8.19: 纵向采样, gap生成</div>
+          <div class="timeline-item">8.21: 文档+代码熟悉, 寻找优化点</div>
+        </div>
+        <div class="timeline-month">
+          <div class="timeline-month-title">2025年 7月</div>
+          <div class="timeline-item">7.2: 准备答辩, VAD_head.py看完</div>
+          <div class="timeline-item">7.14-7.18: VAD_transformer, transformer笔记</div>
+          <div class="timeline-item">7.21-7.25: 工作代码, detection former, BP部分</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 五、常用命令 -->
+    <div class="section" id="commands">
+      <div class="section-header" onclick="toggleSection('commands')">
+        <button class="fold-toggle" id="commands-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+        <div class="section-icon bg-red">⌨️</div>
+        <h2>常用命令</h2>
+        <button class="header-delete-btn" onclick="event.stopPropagation();deleteSection('commands')" title="删除分类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      </div>
+      <div class="code-block">
+        <pre># 仿真命令
+./start.sh --studio -s scenario_templates/default/ov_pilot/logsim/noa_v2/open_loop/1_planning_cnoa.pb.txt --gflags --simulation_start_state=stepping,--simulation_start_state_param=/pilot/planning/adc_trajectory -r /hostfs/home/tyc/data/cnoa/oversea/4677778_lm5-vp10264_20251217-200844_20251217-200944.mcap
+
+# 限速测试
+export ADOS_MIN_LOG_LEVEL=ERROR && ./start.sh --studio -s scenario_templates/default/ov_pilot/logsim/noa_v2/close_loop/1_planning_cnoa.pb.txt --gflags --simulation_start_state=stepping,--simulation_start_state_param=/pilot/planning/adc_trajectory -r /hostfs/home/tyc/data/cnoa/oversea/tsr/5631487_mo5-c0637_20260303-202600_20260303-202700.mcap</pre>
+      </div>
+    </div>
+
+    <div class="section" id="notes">
+      <div class="section-header" onclick="toggleSection('notes')">
+        <button class="fold-toggle" id="notes-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+        <div class="section-icon bg-teal">📝</div>
+        <h2>技术笔记</h2>
+        <button class="header-delete-btn" onclick="event.stopPropagation();deleteSection('notes')" title="删除分类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      </div>
+
+      <div class="subsection" data-subsection="notes.av_s">
+        <div class="subsection-header" onclick="toggleSubsection('notes.av_s')">
+          <button class="fold-toggle" id="sub-notes.av_s-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+          <h3>av_s 说明</h3>
+          <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('notes','notes.av_s')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+        </div>
+        <div class="notes">
+          <ol>
+            <li>environment中的init point来自轨迹拼接的back，back的s = 0，所以init point的s = 0</li>
+            <li>ReferenceLine中的adc_s_直接来自路由，表示距离rl起点的纵向距离，不是0</li>
+            <li>EgoElement中的ego_end_s_是和rl绑定的，规划起点投射到rl上的s，不为0</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 24px; color: #95a5a6; font-size: 0.85rem;">
+      Generated from TODO.md | Last updated: <span id="update-time"></span>
+      <div style="margin-top: 12px;">
+        <button onclick="exportData()" style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; margin: 0 4px;">📥 导出数据</button>
+        <button onclick="document.getElementById('import-file').click()" style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; margin: 0 4px;">📤 导入数据</button>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button class="fab" onclick="openModal()" title="添加待办">+</button>
+
+  <!-- Add Todo Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>
+        添加新待办
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </h2>
+      <div class="form-group">
+        <label>选择分类</label>
+        <select id="section-select" onchange="handleSectionChange()">
+          <option value="">请选择...</option>
+        </select>
+        <div class="new-input-wrapper" id="new-section-wrapper" style="display:none">
+          <input type="text" id="new-section-input" placeholder="输入新分类名称...">
+          <span class="input-hint">新分类将显示在左侧导航中</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>选择子类</label>
+        <select id="subsection-select" onchange="handleSubsectionChange()">
+          <option value="">请选择...</option>
+        </select>
+        <div class="new-input-wrapper" id="new-subsection-wrapper" style="display:none">
+          <input type="text" id="new-subsection-input" placeholder="输入新子类名称...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>待办内容</label>
+        <input type="text" id="todo-input" placeholder="输入待办事项..." onkeydown="if(event.key==='Enter')addTodo()">
+      </div>
+      <div class="form-group">
+        <label>截止日期</label>
+        <input type="date" id="todo-date">
+      </div>
+      <div class="form-group">
+        <label>优先级</label>
+        <div class="priority-select">
+          <button class="priority-btn" data-priority="high" onclick="selectPriority('high')">
+            <span class="priority-dot high"></span> 高
+          </button>
+          <button class="priority-btn active" data-priority="medium" onclick="selectPriority('medium')">
+            <span class="priority-dot medium"></span> 中
+          </button>
+          <button class="priority-btn" data-priority="low" onclick="selectPriority('low')">
+            <span class="priority-dot low"></span> 低
+          </button>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn btn-primary" onclick="addTodo()">添加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Undo Toast -->
+  <div class="toast" id="toast">
+    <span id="toast-msg">已删除</span>
+    <button onclick="undoDelete()">撤销</button>
+  </div>
+
+  <script>
+    const THEME_KEY = 'todo_theme';
+    let searchTimeout = null;
+    let selectedPriority = 'medium';
+
+    // Markdown rendering function with XSS protection
+    function renderMarkdown(text) {
+      if (!text || text.trim() === '') return '';
+      
+      // Configure marked for better security
+      marked.setOptions({
+        gfm: true,
+        breaks: true,
+        mangle: false,
+        headerIds: false
+      });
+      
+      const rawHtml = marked.parse(text);
+      const cleanHtml = DOMPurify.sanitize(rawHtml);
+      return cleanHtml;
+    }
+
+    function selectPriority(priority) {
+      selectedPriority = priority;
+      document.querySelectorAll('.priority-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.priority === priority) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.querySelector('.theme-icon');
+      const isDark = body.classList.toggle('dark-mode');
+      themeIcon.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      const themeIcon = document.querySelector('.theme-icon');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeIcon.textContent = '☀️';
+      } else {
+        themeIcon.textContent = '🌙';
+      }
+    }
+
+    initTheme();
+
+    const SECTIONS = {
+      'learning': {
+        name: '学习计划',
+        icon: '📚',
+        subsections: {
+          '1.1': '长期学习路线',
+          '1.2': '深度学习教程',
+          '1.3': '扩散模型学习',
+          '1.4': '自动驾驶端到端学习',
+          '1.5': '分享准备'
+        }
+      },
+      'work': {
+        name: '工作项目',
+        icon: '💼',
+        subsections: {
+          '2.1': '电子限速 (TRS)',
+          '2.2': 'ISA限速显示',
+          '2.3': '横纵联合规划',
+          '2.4': '变道优化',
+          '2.5': '避让临车道大车问题',
+          '2.6': '规划模块开发'
+        }
+      },
+      'problems': {
+        name: '问题分析记录',
+        icon: '🔍',
+        subsections: {
+          '3.1': '高速晃动猛打问题',
+          '3.2': '变道逻辑说明'
+        }
+      },
+      'daily': {
+        name: '日常记录',
+        icon: '📅',
+        subsections: {}
+      },
+      'commands': {
+        name: '常用命令',
+        icon: '⌨️',
+        subsections: {}
+      },
+      'notes': {
+        name: '技术笔记',
+        icon: '📝',
+        subsections: {}
+      }
+    };
+
+    const STORAGE_KEY = 'todo_app_data';
+    const DB_NAME = 'TodoAppDB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'todoData';
+    let lastDeleted = null;
+    let toastTimeout = null;
+    let db = null;
+
+    // Initialize IndexedDB
+    async function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        
+        request.onerror = () => {
+          console.warn('IndexedDB not available, falling back to localStorage');
+          resolve(null);
+        };
+        
+        request.onsuccess = (event) => {
+          db = event.target.result;
+          resolve(db);
+        };
+        
+        request.onupgradeneeded = (event) => {
+          const database = event.target.result;
+          if (!database.objectStoreNames.contains(STORE_NAME)) {
+            database.createObjectStore(STORE_NAME, { keyPath: 'id' });
+          }
+        };
+      });
+    }
+
+    // Load data from IndexedDB
+    async function loadFromDB() {
+      if (!db) return null;
+      return new Promise((resolve) => {
+        const transaction = db.transaction([STORE_NAME], 'readonly');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.get('main');
+        request.onsuccess = () => resolve(request.result?.data || null);
+        request.onerror = () => resolve(null);
+      });
+    }
+
+    // Save data to IndexedDB
+    async function saveToDB(data) {
+      if (!db) return false;
+      return new Promise((resolve) => {
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.put({ id: 'main', data: data });
+        request.onsuccess = () => resolve(true);
+        request.onerror = () => resolve(false);
+      });
+    }
+
+    // Unified load function (tries IndexedDB first, then localStorage)
+    async function loadFromStorageSync() {
+      const defaultData = { customTodos: [], states: {}, customSections: {}, customSubsections: {}, collapsedSections: {}, collapsedSubsections: {} };
+      
+      // Try IndexedDB first
+      if (db) {
+        const dbData = await loadFromDB();
+        if (dbData) return dbData;
+      }
+      
+      // Fallback to localStorage
+      try {
+        const localData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (localData) {
+          // Migrate to IndexedDB if available
+          if (db) await saveToDB(localData);
+          return localData;
+        }
+      } catch {}
+      
+      return defaultData;
+    }
+
+    // Unified save function (saves to both IndexedDB and localStorage)
+    async function saveToStorageSync(data) {
+      // Save to IndexedDB
+      if (db) await saveToDB(data);
+      
+      // Also save to localStorage as backup
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn('localStorage save failed:', e);
+      }
+    }
+
+    // Sync wrapper for backward compatibility
+    function loadFromStorageSync() {
+      // Try localStorage first for synchronous access
+      try {
+        const localData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (localData) return localData;
+      } catch {}
+      return { customTodos: [], states: {}, customSections: {}, customSubsections: {}, collapsedSections: {}, collapsedSubsections: {} };
+    }
+
+    function saveToStorageSync(data) {
+      // Save to localStorage immediately
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn('localStorage save failed:', e);
+      }
+      // Also save to IndexedDB asynchronously
+      if (db) saveToDB(data);
+    }
+
+    function initSectionSelect() {
+      const select = document.getElementById('section-select');
+      select.innerHTML = '<option value="">请选择...</option>';
+
+      const data = loadFromStorageSync();
+      const deletedSections = data.deletedSections || [];
+
+      Object.entries(SECTIONS).forEach(([key, val]) => {
+        if (deletedSections.includes(key)) return;
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = `${val.icon} ${val.name}`;
+        select.appendChild(opt);
+      });
+
+      if (data.customSections && Object.keys(data.customSections).length > 0) {
+        const divider = document.createElement('option');
+        divider.disabled = true;
+        divider.textContent = '─────────────';
+        select.appendChild(divider);
+
+        Object.entries(data.customSections).forEach(([key, val]) => {
+          const opt = document.createElement('option');
+          opt.value = `custom_${key}`;
+          opt.textContent = `📁 ${val.name}`;
+          select.appendChild(opt);
+        });
+      }
+
+      const divider2 = document.createElement('option');
+      divider2.disabled = true;
+      divider2.textContent = '─────────────';
+      select.appendChild(divider2);
+
+      const newOpt = document.createElement('option');
+      newOpt.value = '__new_section__';
+      newOpt.textContent = '➕ 新建分类...';
+      newOpt.style.color = '#667eea';
+      newOpt.style.fontWeight = '600';
+      select.appendChild(newOpt);
+    }
+
+    function handleSectionChange() {
+      const select = document.getElementById('section-select');
+      const wrapper = document.getElementById('new-section-wrapper');
+      const newInput = document.getElementById('new-section-input');
+
+      if (select.value === '__new_section__') {
+        wrapper.style.display = 'block';
+        newInput.focus();
+        const subSelect = document.getElementById('subsection-select');
+        subSelect.innerHTML = '<option value="">请先输入分类名称</option>';
+        const newOpt = document.createElement('option');
+        newOpt.value = '__new_subsection__';
+        newOpt.textContent = '➕ 新建子类...';
+        newOpt.style.color = '#667eea';
+        newOpt.style.fontWeight = '600';
+        subSelect.appendChild(newOpt);
+      } else {
+        wrapper.style.display = 'none';
+        newInput.value = '';
+        updateSubsections();
+      }
+    }
+
+    function handleSubsectionChange() {
+      const select = document.getElementById('subsection-select');
+      const wrapper = document.getElementById('new-subsection-wrapper');
+      const newInput = document.getElementById('new-subsection-input');
+
+      if (select.value === '__new_subsection__') {
+        wrapper.style.display = 'block';
+        newInput.focus();
+      } else {
+        wrapper.style.display = 'none';
+        newInput.value = '';
+      }
+    }
+
+    function updateSubsections() {
+      const sectionKey = document.getElementById('section-select').value;
+      const subSelect = document.getElementById('subsection-select');
+      const newSubWrapper = document.getElementById('new-subsection-wrapper');
+
+      subSelect.innerHTML = '<option value="">请选择...</option>';
+      newSubWrapper.style.display = 'none';
+
+      if (!sectionKey) return;
+
+      const data = loadFromStorageSync();
+
+      if (sectionKey.startsWith('custom_')) {
+        const subs = data.customSubsections[sectionKey] || {};
+        Object.entries(subs).forEach(([key, val]) => {
+          const opt = document.createElement('option');
+          opt.value = key;
+          opt.textContent = val;
+          subSelect.appendChild(opt);
+        });
+      } else if (SECTIONS[sectionKey] && SECTIONS[sectionKey].subsections) {
+        const deletedSubsections = (data.deletedSubsections || {})[sectionKey] || [];
+        
+        Object.entries(SECTIONS[sectionKey].subsections).forEach(([key, val]) => {
+          if (deletedSubsections.includes(key)) return;
+          const opt = document.createElement('option');
+          opt.value = key;
+          opt.textContent = val;
+          subSelect.appendChild(opt);
+        });
+        
+        const customSubs = data.customSubsections[sectionKey] || {};
+        Object.entries(customSubs).forEach(([key, val]) => {
+          const opt = document.createElement('option');
+          opt.value = key;
+          opt.textContent = val;
+          subSelect.appendChild(opt);
+        });
+      }
+
+      const divider = document.createElement('option');
+      divider.disabled = true;
+      divider.textContent = '─────────────';
+      subSelect.appendChild(divider);
+
+      const newOpt = document.createElement('option');
+      newOpt.value = '__new_subsection__';
+      newOpt.textContent = '➕ 新建子类...';
+      newOpt.style.color = '#667eea';
+      newOpt.style.fontWeight = '600';
+      subSelect.appendChild(newOpt);
+    }
+
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+      document.getElementById('todo-input').focus();
+      document.getElementById('todo-date').valueAsDate = new Date();
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+      document.getElementById('section-select').value = '';
+      document.getElementById('subsection-select').innerHTML = '<option value="">请选择...</option>';
+      document.getElementById('todo-input').value = '';
+      document.getElementById('todo-date').value = '';
+      document.getElementById('new-section-wrapper').style.display = 'none';
+      document.getElementById('new-section-input').value = '';
+      document.getElementById('new-subsection-wrapper').style.display = 'none';
+      document.getElementById('new-subsection-input').value = '';
+      selectPriority('medium');
+    }
+
+    function getTodoItemHTML(text, completed, isCustom = false, todoId = '', date = '', priority = 'medium', notes = '') {
+      const stateClass = completed ? 'completed' : 'pending';
+      const badge = isCustom ? '<span class="custom-badge">自定义</span>' : '';
+      const deleteBtn = isCustom ? `<button class="delete-btn" onclick="event.stopPropagation();deleteTodo('${todoId}')" title="删除"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>` : '';
+      const idAttr = todoId ? `data-id="${todoId}"` : '';
+      const dateDisplay = date ? `<span class="todo-date">📅 ${date}</span>` : '';
+      const priorityLabels = { high: '高', medium: '中', low: '低' };
+      const priorityDisplay = priority ? `<span class="todo-priority priority-${priority}">${priorityLabels[priority] || '中'}</span>` : '';
+      
+      const hasNotesClass = notes ? 'has-notes' : '';
+      const notesIndicator = isCustom ? 
+        `<span class="notes-indicator ${hasNotesClass}" onclick="event.stopPropagation(); toggleNotes(this)" title="添加/编辑备注">
+           <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+         </span>` : '';
+
+      const notesSection = isCustom ? 
+        `<div class="todo-notes-container">
+           <div class="todo-notes-rendered ${notes ? '' : 'empty'}" onclick="event.stopPropagation(); startEditNotes('${todoId}')" title="点击编辑备注">${notes ? renderMarkdown(notes) : '添加备注...'}</div>
+           <textarea class="todo-notes-textarea" placeholder="添加备注..." onblur="saveNote('${todoId}', this.value)" onclick="event.stopPropagation()">${notes || ''}</textarea>
+           <div class="todo-notes-edit-hint">按 Esc 取消编辑</div>
+         </div>` : '';
+
+      const priorityIndicator = priority ? `<div class="priority-indicator priority-${priority}"></div>` : '';
+
+      return `<li class="todo-wrapper" ${idAttr}>
+        ${priorityIndicator}
+        <div class="todo-item ${stateClass}" onclick="toggleTodo(this)">
+          <div class="checkbox"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+          <div class="todo-content">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="todo-text">${text}${badge}</span>
+              ${priorityDisplay}
+              ${notesIndicator}
+            </div>
+            ${dateDisplay}
+          </div>
+          ${deleteBtn}
+        </div>
+        ${notesSection}
+      </li>`;
+    }
+
+    function addTodo() {
+      let sectionKey = document.getElementById('section-select').value;
+      let subsectionKey = document.getElementById('subsection-select').value;
+      const text = document.getElementById('todo-input').value.trim();
+      const date = document.getElementById('todo-date').value;
+
+      if (!text) {
+        alert('请输入待办内容');
+        return;
+      }
+
+      const data = loadFromStorageSync();
+
+      if (sectionKey === '__new_section__') {
+        const newSectionName = document.getElementById('new-section-input').value.trim();
+        if (!newSectionName) {
+          alert('请输入新分类名称');
+          return;
+        }
+        const newKey = 'custom_' + Date.now();
+        data.customSections = data.customSections || {};
+        data.customSections[newKey.replace('custom_', '')] = {
+          name: newSectionName,
+          icon: '📁',
+          created: new Date().toISOString()
+        };
+        sectionKey = newKey;
+        subsectionKey = '';
+        renderNewSection(newKey, newSectionName);
+      }
+
+      if (sectionKey && subsectionKey === '__new_subsection__') {
+        const newSubName = document.getElementById('new-subsection-input').value.trim();
+        if (!newSubName) {
+          alert('请输入新子类名称');
+          return;
+        }
+        // 使用完整的 sectionKey 作为键，保持一致性
+        data.customSubsections = data.customSubsections || {};
+        data.customSubsections[sectionKey] = data.customSubsections[sectionKey] || {};
+        const newSubKey = 'sub_' + Date.now();
+        data.customSubsections[sectionKey][newSubKey] = newSubName;
+        subsectionKey = newSubKey;
+        renderNewSubsection(sectionKey, newSubKey, newSubName);
+      }
+
+      const todoId = 'custom_' + Date.now();
+      data.customTodos.push({
+        id: todoId,
+        section: sectionKey,
+        subsection: subsectionKey,
+        text: text,
+        date: date,
+        priority: selectedPriority,
+        completed: false,
+        notes: ''
+      });
+      saveToStorageSync(data);
+
+      renderCustomTodo(todoId, sectionKey, subsectionKey, text, false, date, selectedPriority, '');
+      closeModal();
+      updateStats();
+      updateProgressBars();
+    }
+
+    function renderNewSection(sectionKey, sectionName) {
+      if (document.getElementById(sectionKey)) return;
+
+      const container = document.querySelector('.container');
+      const notesSection = document.getElementById('notes');
+
+      const sectionHTML = `
+        <div class="section" id="${sectionKey}">
+          <div class="section-header" onclick="toggleSection('${sectionKey}')">
+            <button class="fold-toggle" id="${sectionKey}-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+            <div class="section-icon bg-purple">📁</div>
+            <h2>${sectionName}</h2>
+            <button class="header-delete-btn" onclick="event.stopPropagation();deleteSection('${sectionKey}')" title="删除分类"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+          </div>
+          <ul class="todo-list"></ul>
+        </div>
+      `;
+
+      if (notesSection) {
+        notesSection.insertAdjacentHTML('beforebegin', sectionHTML);
+      }
+
+      // Add nav button for custom section
+      const nav = document.querySelector('.nav');
+      if (nav && !nav.querySelector(`[data-section="${sectionKey}"]`)) {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.dataset.section = sectionKey;
+        btn.onclick = () => showSection(sectionKey);
+        btn.textContent = `📁 ${sectionName}`;
+        nav.appendChild(btn);
+      }
+
+      initSectionSelect();
+    }
+
+    function renderNewSubsection(sectionKey, subsectionKey, subsectionName) {
+      const section = document.getElementById(sectionKey);
+      if (!section) return;
+
+      if (section.querySelector(`[data-subsection="${subsectionKey}"]`)) return;
+
+      const subsectionHTML = `
+        <div class="subsection" data-subsection="${subsectionKey}">
+          <div class="subsection-header" onclick="toggleSubsection('${subsectionKey}')">
+            <button class="fold-toggle" id="sub-${subsectionKey}-fold"><svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
+            <h3>${subsectionName}</h3>
+            <button class="header-delete-btn" onclick="event.stopPropagation();deleteSubsection('${sectionKey}','${subsectionKey}')" title="删除子类"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+          </div>
+          <ul class="todo-list"></ul>
+        </div>
+      `;
+
+      const lastSubsection = section.querySelector('.subsection:last-of-type');
+      if (lastSubsection) {
+        lastSubsection.insertAdjacentHTML('afterend', subsectionHTML);
+      } else {
+        const sectionHeader = section.querySelector('.section-header');
+        if (sectionHeader) {
+          sectionHeader.insertAdjacentHTML('afterend', subsectionHTML);
+        }
+      }
+    }
+
+    function renderCustomTodo(todoId, sectionKey, subsectionKey, text, completed, date = '', priority = 'medium', notes = '') {
+      let targetList;
+
+      if (subsectionKey && sectionKey) {
+        const section = document.getElementById(sectionKey);
+        if (section) {
+          const subsections = section.querySelectorAll('.subsection');
+          for (const sub of subsections) {
+            const subKey = sub.getAttribute('data-subsection');
+            if (subKey === subsectionKey) {
+              targetList = sub.querySelector('.todo-list');
+              break;
+            }
+          }
+        }
+      }
+
+      if (!targetList && sectionKey) {
+        const section = document.getElementById(sectionKey);
+        if (section) {
+          targetList = section.querySelector('.todo-list');
+        }
+      }
+
+      if (!targetList) {
+        const lastSection = document.querySelector('.section:last-of-type');
+        if (lastSection) {
+          targetList = lastSection.querySelector('.todo-list');
+        }
+      }
+
+      if (targetList) {
+        targetList.insertAdjacentHTML('beforeend', getTodoItemHTML(text, completed, true, todoId, date, priority, notes));
+      }
+    }
+
+    function saveToStorageSync(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function deleteTodo(todoId) {
+      const item = document.querySelector(`[data-id="${todoId}"]`);
+      if (!item) return;
+
+      lastDeleted = {
+        id: todoId,
+        text: item.querySelector('.todo-text').textContent.replace('自定义', '').trim(),
+        section: '',
+        subsection: '',
+        date: '',
+        notes: ''
+      };
+
+      const data = loadFromStorageSync();
+      const idx = data.customTodos.findIndex(t => t.id === todoId);
+      if (idx > -1) {
+        lastDeleted.section = data.customTodos[idx].section;
+        lastDeleted.subsection = data.customTodos[idx].subsection;
+        lastDeleted.date = data.customTodos[idx].date;
+        lastDeleted.notes = data.customTodos[idx].notes;
+        data.customTodos.splice(idx, 1);
+        saveToStorageSync(data);
+      }
+
+      item.remove();
+      updateStats();
+      updateProgressBars();
+      showToast('已删除');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.add('active');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(hideToast, 5000);
+    }
+
+    function hideToast() {
+      document.getElementById('toast').classList.remove('active');
+      lastDeleted = null;
+    }
+
+    function saveNote(todoId, notes) {
+      const data = loadFromStorageSync();
+      const todoIdx = data.customTodos.findIndex(t => t.id === todoId);
+      
+      if (todoIdx > -1) {
+        data.customTodos[todoIdx].notes = notes;
+        saveToStorageSync(data);
+        
+        // Update visual indicator and rendered markdown
+        const wrapper = document.querySelector(`.todo-wrapper[data-id="${todoId}"]`);
+        if (wrapper) {
+            const indicator = wrapper.querySelector('.notes-indicator');
+            if (indicator) {
+                if (notes && notes.trim().length > 0) {
+                    indicator.classList.add('has-notes');
+                } else {
+                    indicator.classList.remove('has-notes');
+                }
+            }
+            
+            // Update rendered markdown display
+            const rendered = wrapper.querySelector('.todo-notes-rendered');
+            if (rendered) {
+                rendered.innerHTML = notes ? renderMarkdown(notes) : '添加备注...';
+                rendered.classList.toggle('empty', !notes);
+            }
+            
+            // Switch back to view mode
+            wrapper.classList.remove('editing');
+        }
+      }
+    }
+
+    function toggleNotes(element) {
+        if (event) {
+          event.stopPropagation();
+        }
+        
+        const wrapper = element.closest('.todo-wrapper');
+        if (!wrapper) return;
+        
+        wrapper.classList.toggle('expanded');
+        
+        if (wrapper.classList.contains('expanded')) {
+            // Show rendered view by default
+            wrapper.classList.remove('editing');
+            const rendered = wrapper.querySelector('.todo-notes-rendered');
+            if (rendered) {
+                // Re-render markdown content
+                const textarea = wrapper.querySelector('.todo-notes-textarea');
+                if (textarea && textarea.value) {
+                    rendered.innerHTML = renderMarkdown(textarea.value);
+                    rendered.classList.remove('empty');
+                }
+            }
+        }
+    }
+
+    function startEditNotes(todoId) {
+        const wrapper = document.querySelector(`.todo-wrapper[data-id="${todoId}"]`);
+        if (!wrapper) return;
+        
+        wrapper.classList.add('editing');
+        const textarea = wrapper.querySelector('.todo-notes-textarea');
+        if (textarea) {
+            setTimeout(() => textarea.focus(), 50);
+        }
+        
+        // Handle Esc key to cancel editing
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') {
+                wrapper.classList.remove('editing');
+                // Re-render from saved data
+                const data = loadFromStorageSync();
+                const todo = data.customTodos.find(t => t.id === todoId);
+                const rendered = wrapper.querySelector('.todo-notes-rendered');
+                if (rendered && todo) {
+                    rendered.innerHTML = todo.notes ? renderMarkdown(todo.notes) : '添加备注...';
+                    rendered.classList.toggle('empty', !todo.notes);
+                }
+                // Reset textarea to saved value
+                if (textarea && todo) {
+                    textarea.value = todo.notes || '';
+                }
+                document.removeEventListener('keydown', handleEsc);
+            }
+        };
+        document.addEventListener('keydown', handleEsc);
+        
+        // Remove listener when textarea loses focus
+        textarea.addEventListener('blur', () => {
+            document.removeEventListener('keydown', handleEsc);
+        }, { once: true });
+    }
+
+    function toggleTodo(item) {
+        const todoItem = item.classList.contains('todo-item') ? item : item.closest('.todo-item');
+        if (!todoItem) return;
+
+        todoItem.classList.toggle('completed');
+        todoItem.classList.toggle('pending');
+        
+        // Update model
+        const data = loadFromStorageSync();
+        const wrapper = todoItem.closest('.todo-wrapper');
+        const todoId = wrapper ? wrapper.getAttribute('data-id') : null;
+        
+        if (todoId) {
+            const todo = data.customTodos.find(t => t.id === todoId);
+            if (todo) {
+                todo.completed = todoItem.classList.contains('completed');
+            }
+        }
+        
+        // Save state for all items (including built-in)
+        const allItems = document.querySelectorAll('.todo-item');
+        data.states = {};
+        
+        allItems.forEach((el, idx) => {
+            const parent = el.closest('.todo-wrapper');
+            const id = parent ? parent.getAttribute('data-id') : `builtin_${idx}`;
+            // For built-in items, use index-based ID if no wrapper ID
+            data.states[id] = el.classList.contains('completed');
+        });
+        
+        saveToStorageSync(data);
+        updateStats();
+        updateProgressBars();
+    }
+
+    function updateStats() {
+      const allItems = document.querySelectorAll('.todo-item');
+      const completed = document.querySelectorAll('.todo-item.completed');
+      const pending = allItems.length - completed.length;
+      const percent = allItems.length > 0 ? Math.round((completed.length / allItems.length) * 100) : 0;
+
+      document.getElementById('completed-count').textContent = completed.length;
+      document.getElementById('pending-count').textContent = pending;
+      document.getElementById('progress-percent').textContent = percent + '%';
+    }
+
+    function updateProgressBars() {
+      document.querySelectorAll('.subsection').forEach(sub => {
+        const items = sub.querySelectorAll('.todo-item');
+        const completed = sub.querySelectorAll('.todo-item.completed');
+        const bar = sub.querySelector('.progress-fill');
+        const text = sub.querySelector('.progress-text');
+
+        if (bar && items.length > 0) {
+          const pct = Math.round((completed.length / items.length) * 100);
+          bar.style.width = pct + '%';
+
+          if (pct === 100) {
+            bar.classList.remove('fill-purple', 'fill-blue');
+            bar.classList.add('fill-green');
+          }
+
+          if (text) {
+            text.textContent = `${completed.length}/${items.length} 完成` + (pct === 100 ? ' ✓' : '');
+          }
+        }
+      });
+    }
+
+    const FILTER_STATE_KEY = 'todo_filter_state';
+    const PRIORITY_FILTER_KEY = 'todo_priority_filter';
+
+    function filterItems(filter) {
+      // Find wrapper elements for custom items, and todo-item for builtin
+      const wrappers = document.querySelectorAll('.todo-wrapper');
+      
+      // Update filter button state
+      const btns = document.querySelectorAll('.filter-btn:not(.priority-filter)');
+      btns.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      wrappers.forEach(wrapper => {
+        const item = wrapper.querySelector('.todo-item');
+        if (!item) return;
+        
+        let shouldShow = false;
+        if (filter === 'all') {
+          shouldShow = true;
+        } else if (filter === 'completed') {
+          shouldShow = item.classList.contains('completed');
+        } else if (filter === 'pending') {
+          shouldShow = item.classList.contains('pending');
+        }
+        
+        wrapper.style.display = shouldShow ? 'block' : 'none';
+      });
+      
+      // Also handle loose todo items (builtin ones that haven't been wrapped yet)
+      // Note: We need to check if they are inside a wrapper first
+      const looseItems = document.querySelectorAll('.todo-item');
+      looseItems.forEach(item => {
+        if (item.closest('.todo-wrapper')) return; // Skip wrapped items
+        
+        let shouldShow = false;
+        if (filter === 'all') {
+          shouldShow = true;
+        } else if (filter === 'completed') {
+          shouldShow = item.classList.contains('completed');
+        } else if (filter === 'pending') {
+          shouldShow = item.classList.contains('pending');
+        }
+        
+        item.style.display = shouldShow ? 'flex' : 'none';
+      });
+
+      // Save filter state
+      localStorage.setItem(FILTER_STATE_KEY, filter);
+    }
+
+    function filterByPriority(priority) {
+      const wrappers = document.querySelectorAll('.todo-wrapper');
+      
+      document.querySelectorAll('.priority-filter').forEach(btn => btn.classList.remove('active'));
+      event.target.closest('.priority-filter').classList.add('active');
+
+      wrappers.forEach(wrapper => {
+        const indicator = wrapper.querySelector('.priority-indicator');
+        if (!indicator) {
+          wrapper.style.display = priority === 'all' ? 'block' : 'none';
+          return;
+        }
+        
+        let shouldShow = false;
+        if (priority === 'all') {
+          shouldShow = true;
+        } else {
+          shouldShow = indicator.classList.contains(`priority-${priority}`);
+        }
+        
+        wrapper.style.display = shouldShow ? 'block' : 'none';
+      });
+
+      // Save priority filter state
+      localStorage.setItem(PRIORITY_FILTER_KEY, priority);
+    }
+
+    function restoreFilterState() {
+      // Restore status filter (全部/待完成/已完成)
+      const savedFilter = localStorage.getItem(FILTER_STATE_KEY);
+      if (savedFilter && savedFilter !== 'all') {
+        const btn = document.querySelector(`.filter-btn:not(.priority-filter)[onclick*="${savedFilter}"]`);
+        if (btn) {
+          // Set active state
+          document.querySelectorAll('.filter-btn:not(.priority-filter)').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          // Apply filter
+          filterItemsDirect(savedFilter);
+        }
+      }
+
+      // Restore priority filter
+      const savedPriority = localStorage.getItem(PRIORITY_FILTER_KEY);
+      if (savedPriority && savedPriority !== 'all') {
+        const btn = document.querySelector(`.priority-filter[onclick*="'${savedPriority}'"]`);
+        if (btn) {
+          document.querySelectorAll('.priority-filter').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          filterByPriorityDirect(savedPriority);
+        }
+      }
+    }
+
+    function filterItemsDirect(filter) {
+      const wrappers = document.querySelectorAll('.todo-wrapper');
+      
+      wrappers.forEach(wrapper => {
+        const item = wrapper.querySelector('.todo-item');
+        if (!item) return;
+        
+        let shouldShow = false;
+        if (filter === 'all') shouldShow = true;
+        else if (filter === 'completed') shouldShow = item.classList.contains('completed');
+        else if (filter === 'pending') shouldShow = item.classList.contains('pending');
+        
+        wrapper.style.display = shouldShow ? 'block' : 'none';
+      });
+      
+      const looseItems = document.querySelectorAll('.todo-item');
+      looseItems.forEach(item => {
+        if (item.closest('.todo-wrapper')) return;
+        
+        let shouldShow = false;
+        if (filter === 'all') shouldShow = true;
+        else if (filter === 'completed') shouldShow = item.classList.contains('completed');
+        else if (filter === 'pending') shouldShow = item.classList.contains('pending');
+        
+        item.style.display = shouldShow ? 'flex' : 'none';
+      });
+    }
+
+    function filterByPriorityDirect(priority) {
+      const wrappers = document.querySelectorAll('.todo-wrapper');
+      
+      wrappers.forEach(wrapper => {
+        const indicator = wrapper.querySelector('.priority-indicator');
+        if (!indicator) {
+          wrapper.style.display = priority === 'all' ? 'block' : 'none';
+          return;
+        }
+        
+        let shouldShow = priority === 'all' || indicator.classList.contains(`priority-${priority}`);
+        wrapper.style.display = shouldShow ? 'block' : 'none';
+      });
+    }
+
+    function toggleSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const foldBtn = document.getElementById(`${sectionId}-fold`);
+      section.classList.toggle('collapsed');
+      
+      if (foldBtn) {
+        foldBtn.classList.toggle('collapsed');
+      }
+
+      // Save collapsed state
+      const data = loadFromStorageSync();
+      data.collapsedSections = data.collapsedSections || {};
+      data.collapsedSections[sectionId] = section.classList.contains('collapsed');
+      saveToStorageSync(data);
+    }
+
+    function toggleSubsection(subsectionId) {
+      const subsection = document.querySelector(`[data-subsection="${subsectionId}"]`);
+      if (!subsection) return;
+
+      const foldBtn = document.getElementById(`sub-${subsectionId}-fold`);
+      subsection.classList.toggle('collapsed');
+      
+      if (foldBtn) {
+        foldBtn.classList.toggle('collapsed');
+      }
+
+      // Save collapsed state
+      const data = loadFromStorageSync();
+      data.collapsedSubsections = data.collapsedSubsections || {};
+      data.collapsedSubsections[subsectionId] = subsection.classList.contains('collapsed');
+      saveToStorageSync(data);
+    }
+
+    function deleteSection(sectionId) {
+      if (!confirm('确定要删除这个分类吗？该分类下的所有内容都将被删除。')) {
+        return;
+      }
+
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const sectionName = section.querySelector('h2')?.textContent || '未知分类';
+      const data = loadFromStorageSync();
+      
+      const todosInSection = data.customTodos.filter(t => t.section === sectionId);
+      
+      const navBtn = document.querySelector(`.nav-btn[data-section="${sectionId}"]`);
+      
+      lastDeleted = {
+        type: 'section',
+        sectionId: sectionId,
+        sectionName: sectionName,
+        isCustom: sectionId.startsWith('custom_'),
+        sectionData: sectionId.startsWith('custom_') ? data.customSections[sectionId.replace('custom_', '')] : null,
+        subsectionsData: {},
+        todos: todosInSection,
+        htmlContent: section.outerHTML,
+        navBtnHtml: navBtn ? navBtn.outerHTML : null
+      };
+
+      if (sectionId.startsWith('custom_')) {
+        lastDeleted.subsectionsData = data.customSubsections[sectionId] || {};
+        delete data.customSections[sectionId.replace('custom_', '')];
+        delete data.customSubsections[sectionId];
+      } else {
+        lastDeleted.subsectionsData = data.customSubsections[sectionId] || {};
+        delete data.customSubsections[sectionId];
+        data.deletedSections = data.deletedSections || [];
+        if (!data.deletedSections.includes(sectionId)) {
+          data.deletedSections.push(sectionId);
+        }
+      }
+      
+      data.customTodos = data.customTodos.filter(t => t.section !== sectionId);
+      saveToStorageSync(data);
+
+      section.remove();
+      
+      if (navBtn) {
+        navBtn.remove();
+      }
+      
+      // If the deleted section was the current view, switch to all
+      const activeBtn = document.querySelector('.nav-btn.active');
+      if (activeBtn && activeBtn.dataset.section === sectionId) {
+        showAllSections();
+      }
+      
+      initSectionSelect();
+      updateStats();
+      showToast('分类已删除');
+    }
+
+    function deleteSubsection(sectionId, subsectionId) {
+      if (!confirm('确定要删除这个子类吗？该子类下的所有内容都将被删除。')) {
+        return;
+      }
+
+      const subsection = document.querySelector(`[data-subsection="${subsectionId}"]`);
+      if (!subsection) return;
+
+      const subsectionName = subsection.querySelector('h3')?.textContent || '未知子类';
+      const data = loadFromStorageSync();
+      
+      const todosInSubsection = data.customTodos.filter(t => t.subsection === subsectionId);
+      
+      lastDeleted = {
+        type: 'subsection',
+        sectionId: sectionId,
+        subsectionId: subsectionId,
+        subsectionName: subsectionName,
+        isCustom: subsectionId.startsWith('sub_'),
+        todos: todosInSubsection,
+        htmlContent: subsection.outerHTML
+      };
+
+      if (subsectionId.startsWith('sub_')) {
+        if (data.customSubsections[sectionId]) {
+          delete data.customSubsections[sectionId][subsectionId];
+        }
+      } else {
+        data.deletedSubsections = data.deletedSubsections || {};
+        data.deletedSubsections[sectionId] = data.deletedSubsections[sectionId] || [];
+        if (!data.deletedSubsections[sectionId].includes(subsectionId)) {
+          data.deletedSubsections[sectionId].push(subsectionId);
+        }
+      }
+      
+      data.customTodos = data.customTodos.filter(t => t.subsection !== subsectionId);
+      saveToStorageSync(data);
+
+      subsection.remove();
+      
+      updateStats();
+      updateProgressBars();
+      showToast('子类已删除');
+    }
+
+    function undoDelete() {
+      if (!lastDeleted) return;
+
+      const data = loadFromStorageSync();
+
+      if (lastDeleted.type === 'section') {
+        if (lastDeleted.isCustom) {
+          const customKey = lastDeleted.sectionId.replace('custom_', '');
+          data.customSections[customKey] = lastDeleted.sectionData;
+          data.customSubsections[lastDeleted.sectionId] = lastDeleted.subsectionsData;
+          data.customTodos.push(...lastDeleted.todos);
+          saveToStorageSync(data);
+
+          renderNewSection(lastDeleted.sectionId, lastDeleted.sectionName);
+          
+          Object.entries(lastDeleted.subsectionsData).forEach(([subKey, subName]) => {
+            renderNewSubsection(lastDeleted.sectionId, subKey, subName);
+          });
+
+          lastDeleted.todos.forEach(todo => {
+            renderCustomTodo(todo.id, todo.section, todo.subsection, todo.text, todo.completed, todo.date, todo.priority || 'medium', todo.notes);
+          });
+
+          initSectionSelect();
+        } else {
+          data.deletedSections = (data.deletedSections || []).filter(id => id !== lastDeleted.sectionId);
+          data.customSubsections[lastDeleted.sectionId] = lastDeleted.subsectionsData;
+          data.customTodos.push(...lastDeleted.todos);
+          saveToStorageSync(data);
+          
+          const container = document.querySelector('.container');
+          const notesSection = document.getElementById('notes');
+          if (notesSection && lastDeleted.htmlContent) {
+            notesSection.insertAdjacentHTML('beforebegin', lastDeleted.htmlContent);
+          }
+          
+          if (lastDeleted.navBtnHtml) {
+            const nav = document.querySelector('.nav');
+            if (nav) {
+              nav.insertAdjacentHTML('beforeend', lastDeleted.navBtnHtml);
+            }
+          }
+        }
+      } else if (lastDeleted.type === 'subsection') {
+        if (lastDeleted.isCustom) {
+          data.customSubsections[lastDeleted.sectionId] = data.customSubsections[lastDeleted.sectionId] || {};
+          data.customSubsections[lastDeleted.sectionId][lastDeleted.subsectionId] = lastDeleted.subsectionName;
+          data.customTodos.push(...lastDeleted.todos);
+          saveToStorageSync(data);
+
+          renderNewSubsection(lastDeleted.sectionId, lastDeleted.subsectionId, lastDeleted.subsectionName);
+
+          lastDeleted.todos.forEach(todo => {
+            renderCustomTodo(todo.id, todo.section, todo.subsection, todo.text, todo.completed, todo.date, todo.priority || 'medium', todo.notes);
+          });
+        } else {
+          data.deletedSubsections = data.deletedSubsections || {};
+          data.deletedSubsections[lastDeleted.sectionId] = (data.deletedSubsections[lastDeleted.sectionId] || []).filter(id => id !== lastDeleted.subsectionId);
+          data.customTodos.push(...lastDeleted.todos);
+          saveToStorageSync(data);
+          
+          const section = document.getElementById(lastDeleted.sectionId);
+          const lastSubsection = section?.querySelector('.subsection:last-of-type');
+          if (lastSubsection && lastDeleted.htmlContent) {
+            lastSubsection.insertAdjacentHTML('afterend', lastDeleted.htmlContent);
+          } else if (section) {
+            const sectionHeader = section.querySelector('.section-header');
+            if (sectionHeader && lastDeleted.htmlContent) {
+              sectionHeader.insertAdjacentHTML('afterend', lastDeleted.htmlContent);
+            }
+          }
+        }
+      } else {
+      // Original undo for single todo
+        data.customTodos.push({
+          id: lastDeleted.id,
+          section: lastDeleted.section,
+          subsection: lastDeleted.subsection,
+          text: lastDeleted.text,
+          date: lastDeleted.date,
+          completed: false,
+          notes: lastDeleted.notes
+        });
+        saveToStorageSync(data);
+        renderCustomTodo(lastDeleted.id, lastDeleted.section, lastDeleted.subsection, lastDeleted.text, false, lastDeleted.date, 'medium', lastDeleted.notes);
+        
+        // Render markdown for restored notes
+        if (lastDeleted.notes) {
+          setTimeout(() => {
+            const wrapper = document.querySelector(`.todo-wrapper[data-id="${lastDeleted.id}"]`);
+            if (wrapper) {
+              const rendered = wrapper.querySelector('.todo-notes-rendered');
+              if (rendered) {
+                rendered.innerHTML = renderMarkdown(lastDeleted.notes);
+                rendered.classList.remove('empty');
+              }
+            }
+          }, 0);
+        }
+      }
+
+      updateStats();
+      updateProgressBars();
+      hideToast();
+      lastDeleted = null;
+    }
+
+    function loadSavedState() {
+      const data = loadFromStorageSync();
+
+      Object.entries(data.customSections || {}).forEach(([key, val]) => {
+        const sectionKey = `custom_${key}`;
+        renderNewSection(sectionKey, val.name);
+      });
+
+      Object.entries(data.customSubsections || {}).forEach(([sectionKey, subs]) => {
+        Object.entries(subs).forEach(([subKey, subName]) => {
+          renderNewSubsection(sectionKey, subKey, subName);
+        });
+      });
+
+      const allItems = document.querySelectorAll('.todo-item');
+      allItems.forEach((el, idx) => {
+        const id = el.getAttribute('data-id') || `builtin_${idx}`;
+        if (data.states[id] !== undefined) {
+          el.classList.toggle('completed', data.states[id]);
+          el.classList.toggle('pending', !data.states[id]);
+        }
+      });
+
+      data.customTodos.forEach(todo => {
+        const existing = document.querySelector(`[data-id="${todo.id}"]`);
+        if (!existing) {
+          renderCustomTodo(todo.id, todo.section, todo.subsection, todo.text, todo.completed, todo.date, todo.priority || 'medium', todo.notes);
+        }
+        
+        // Render markdown for notes after DOM update
+        setTimeout(() => {
+          const wrapper = document.querySelector(`.todo-wrapper[data-id="${todo.id}"]`);
+          if (wrapper && todo.notes) {
+            const rendered = wrapper.querySelector('.todo-notes-rendered');
+            if (rendered) {
+              rendered.innerHTML = renderMarkdown(todo.notes);
+              rendered.classList.remove('empty');
+            }
+          }
+        }, 0);
+      });
+
+      (data.deletedSections || []).forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) section.remove();
+        
+        const navBtn = document.querySelector(`.nav-btn[data-section="${sectionId}"]`);
+        if (navBtn) navBtn.remove();
+      });
+
+      Object.entries(data.deletedSubsections || {}).forEach(([sectionId, subIds]) => {
+        subIds.forEach(subId => {
+          const subsection = document.querySelector(`[data-subsection="${subId}"]`);
+          if (subsection) subsection.remove();
+        });
+      });
+
+      updateStats();
+      updateProgressBars();
+
+      const collapsedSections = data.collapsedSections || {};
+      const collapsedSubsections = data.collapsedSubsections || {};
+      
+      Object.entries(collapsedSections).forEach(([sectionId, isCollapsed]) => {
+        if (isCollapsed) {
+          const section = document.getElementById(sectionId);
+          const foldBtn = document.getElementById(`${sectionId}-fold`);
+          if (section) {
+            section.classList.add('collapsed');
+          }
+          if (foldBtn) {
+            foldBtn.classList.add('collapsed');
+          }
+        }
+      });
+
+      Object.entries(collapsedSubsections).forEach(([subsectionId, isCollapsed]) => {
+        if (isCollapsed) {
+          const subsection = document.querySelector(`[data-subsection="${subsectionId}"]`);
+          const foldBtn = document.getElementById(`sub-${subsectionId}-fold`);
+          if (subsection) {
+            subsection.classList.add('collapsed');
+          }
+          if (foldBtn) {
+            foldBtn.classList.add('collapsed');
+          }
+        }
+      });
+    }
+
+    function exportData() {
+      const data = loadFromStorageSync();
+      const dataStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `todo-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('数据已导出');
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (confirm('导入将覆盖当前所有数据，确定继续吗？')) {
+            saveToStorageSync(data);
+            location.reload();
+          }
+        } catch (err) {
+          alert('导入失败：文件格式不正确');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // Notification system for deadline reminders
+    let notificationInterval = null;
+
+    function initNotifications() {
+      // Request notification permission
+      if ('Notification' in window) {
+        if (Notification.permission === 'default') {
+          Notification.requestPermission().then(permission => {
+            console.log('Notification permission:', permission);
+          });
+        }
+        // Start checking deadlines and daily reminder every minute
+        checkDeadlines();
+        checkDailyReminder();
+        notificationInterval = setInterval(() => {
+          checkDeadlines();
+          checkDailyReminder();
+        }, 60 * 1000);
+      }
+    }
+
+    function checkDeadlines() {
+      if (Notification.permission !== 'granted') return;
+
+      const data = loadFromStorageSync();
+      const now = new Date();
+      const notifiedKey = 'todo_notified';
+      let notified = [];
+      try {
+        notified = JSON.parse(localStorage.getItem(notifiedKey)) || [];
+      } catch {}
+
+      // Clean up old notifications (older than 2 days)
+      const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      notified = notified.filter(n => n.date >= twoDaysAgo);
+
+      data.customTodos.forEach(todo => {
+        if (!todo.date || todo.completed) return;
+
+        // Deadline is at end of day (23:59)
+        const deadline = new Date(todo.date + 'T23:59:00');
+        const fourHoursBefore = new Date(deadline.getTime() - 4 * 60 * 60 * 1000);
+
+        // Check if we're within the 4-hour window and past the reminder time
+        if (now >= fourHoursBefore && now <= deadline) {
+          // Check if already notified for this todo today
+          const notifId = `${todo.id}_${todo.date}`;
+          if (notified.find(n => n.id === notifId)) return;
+
+          // Send notification
+          const hoursLeft = Math.max(1, Math.round((deadline - now) / (60 * 60 * 1000)));
+          const notification = new Notification('📋 待办即将到期', {
+            body: `${todo.text}\n还剩约 ${hoursLeft} 小时`,
+            icon: '📋',
+            tag: notifId,
+            requireInteraction: true
+          });
+
+          notification.onclick = () => {
+            window.focus();
+            notification.close();
+          };
+
+          // Mark as notified
+          notified.push({ id: notifId, date: todo.date, time: now.toISOString() });
+          localStorage.setItem(notifiedKey, JSON.stringify(notified));
+        }
+      });
+    }
+
+    function initApp() {
+      initDB().then(() => {
+        document.getElementById('update-time').textContent = new Date().toLocaleString('zh-CN');
+        initSectionSelect();
+        loadSavedState();
+        restoreNavState();
+        restoreFilterState();
+        initSearch();
+        initSortable();
+        initNotifications();
+      });
+    }
+
+    // Section navigation - show only selected section
+    const NAV_STATE_KEY = 'todo_nav_state';
+
+    function showSection(sectionId) {
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+      });
+
+      // Show only the selected section
+      const target = document.getElementById(sectionId);
+      if (target) {
+        target.style.display = 'block';
+      }
+
+      // Update nav button active state
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.section === sectionId) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Save navigation state
+      localStorage.setItem(NAV_STATE_KEY, sectionId);
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showAllSections() {
+      // Show all sections
+      document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'block';
+      });
+
+      // Update nav button active state
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.section === 'all') {
+          btn.classList.add('active');
+        }
+      });
+
+      // Save navigation state
+      localStorage.setItem(NAV_STATE_KEY, 'all');
+    }
+
+    function restoreNavState() {
+      const saved = localStorage.getItem(NAV_STATE_KEY);
+      if (saved && saved !== 'all') {
+        // Check if the saved section still exists
+        const section = document.getElementById(saved);
+        const btn = document.querySelector(`.nav-btn[data-section="${saved}"]`);
+        if (section && btn) {
+          showSection(saved);
+          return;
+        }
+      }
+      // Default: show all
+      showAllSections();
+    }
+
+    function initSortable() {
+      document.querySelectorAll('.todo-list').forEach(list => {
+        new Sortable(list, {
+          animation: 150,
+          ghostClass: 'sortable-ghost',
+          dragClass: 'sortable-drag',
+          chosenClass: 'sortable-chosen',
+          handle: '.todo-item',
+          delay: 100,
+          delayOnTouchOnly: true,
+          onEnd: function(evt) {
+            saveTodoOrder();
+          }
+        });
+      });
+    }
+
+    function saveTodoOrder() {
+      const data = loadFromStorageSync();
+      const newOrder = [];
+      
+      document.querySelectorAll('.todo-item[data-id]').forEach(item => {
+        const todoId = item.getAttribute('data-id');
+        const todo = data.customTodos.find(t => t.id === todoId);
+        if (todo) {
+          newOrder.push(todo);
+        }
+      });
+      
+      data.customTodos = newOrder;
+      saveToStorageSync(data);
+    }
+
+    function toggleSearch() {
+      const wrapper = document.getElementById('search-wrapper');
+      const searchInput = document.getElementById('search-input');
+      const isActive = wrapper.classList.toggle('active');
+      
+      if (isActive) {
+        searchInput.focus();
+      } else {
+        clearSearch();
+      }
+    }
+
+    function initSearch() {
+      const searchInput = document.getElementById('search-input');
+      const clearBtn = document.getElementById('search-clear');
+      const wrapper = document.getElementById('search-wrapper');
+      
+      searchInput.addEventListener('input', (e) => {
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          performSearch(e.target.value.trim());
+        }, 300);
+        
+        if (e.target.value.trim()) {
+          clearBtn.classList.add('visible');
+        } else {
+          clearBtn.classList.remove('visible');
+        }
+      });
+      
+      searchInput.addEventListener('blur', () => {
+        if (!searchInput.value.trim()) {
+          setTimeout(() => wrapper.classList.remove('active'), 200);
+        }
+      });
+      
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+          e.preventDefault();
+          wrapper.classList.add('active');
+          searchInput.focus();
+        }
+        if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          wrapper.classList.add('active');
+          searchInput.focus();
+        }
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+          clearSearch();
+          searchInput.blur();
+          wrapper.classList.remove('active');
+        }
+      });
+    }
+
+    function clearSearch() {
+      const searchInput = document.getElementById('search-input');
+      const clearBtn = document.getElementById('search-clear');
+      
+      searchInput.value = '';
+      clearBtn.classList.remove('visible');
+      performSearch('');
+    }
+
+    function performSearch(query) {
+      const sections = document.querySelectorAll('.section');
+      const noResults = document.getElementById('no-results');
+      let hasVisibleItems = false;
+      
+      // Clear previous highlights
+      clearHighlights();
+      
+      if (!query) {
+        // Reset visibility - restore current navigation state
+        const activeBtn = document.querySelector('.nav-btn.active');
+        const activeSection = activeBtn ? activeBtn.dataset.section : 'all';
+        
+        if (activeSection === 'all') {
+          showAllSections();
+        } else {
+          showSection(activeSection);
+        }
+        
+        noResults.style.display = 'none';
+        return;
+      }
+      
+      // When searching, show all sections to search across everything
+      sections.forEach(section => {
+        section.style.display = 'block';
+      });
+      
+      const lowerQuery = query.toLowerCase();
+      
+      sections.forEach(section => {
+        let sectionHasMatch = false;
+        const sectionTitle = section.querySelector('h2').textContent;
+        const subsections = section.querySelectorAll('.subsection');
+        
+        // Check section title match
+        if (sectionTitle.toLowerCase().includes(lowerQuery)) {
+          sectionHasMatch = true;
+          highlightText(section.querySelector('h2'), query);
+        }
+        
+        subsections.forEach(sub => {
+          let subHasMatch = false;
+          const subTitle = sub.querySelector('h3').textContent;
+          const items = sub.querySelectorAll('.todo-item');
+          
+          // Check subsection title match
+          if (subTitle.toLowerCase().includes(lowerQuery)) {
+            subHasMatch = true;
+            highlightText(sub.querySelector('h3'), query);
+          }
+          
+          items.forEach(item => {
+            const textEl = item.querySelector('.todo-text');
+            const text = textEl.textContent;
+            
+            if (text.toLowerCase().includes(lowerQuery)) {
+              item.style.display = 'flex';
+              subHasMatch = true;
+              highlightText(textEl, query);
+            } else {
+              item.style.display = 'none';
+            }
+          });
+          
+          // Also search in notes if present
+          const notes = sub.querySelector('.notes');
+          if (notes && notes.textContent.toLowerCase().includes(lowerQuery)) {
+            subHasMatch = true;
+            // Highlight in notes is complex due to HTML structure, skipping for now or simple implementation
+          }
+          
+          if (subHasMatch || sectionHasMatch) {
+            sub.style.display = '';
+            // Expand subsection if it has matches
+            sub.classList.remove('collapsed');
+            sectionHasMatch = true;
+            
+            // If subsection title matches but no items match, show all items
+            if (subTitle.toLowerCase().includes(lowerQuery)) {
+              items.forEach(item => item.style.display = 'flex');
+            }
+          } else {
+            sub.style.display = 'none';
+          }
+        });
+        
+        // Handle items directly in section (if any)
+        const directItems = Array.from(section.querySelectorAll('.todo-list > .todo-item'));
+        if (directItems.length > 0) {
+           directItems.forEach(item => {
+            const textEl = item.querySelector('.todo-text');
+            const text = textEl.textContent;
+            
+            if (text.toLowerCase().includes(lowerQuery)) {
+              item.style.display = 'flex';
+              sectionHasMatch = true;
+              highlightText(textEl, query);
+            } else {
+              item.style.display = 'none';
+        }
+      });
+    }
+
+    function checkDailyReminder() {
+      if (Notification.permission !== 'granted') return;
+
+      const now = new Date();
+      const hour = now.getHours();
+      const minute = now.getMinutes();
+      const today = now.toISOString().slice(0, 10);
+
+      // Only trigger at 20:00 (8 PM)
+      if (hour !== 20 || minute !== 0) return;
+
+      // Check if already sent today
+      const dailyKey = 'todo_daily_reminder';
+      const lastSent = localStorage.getItem(dailyKey);
+      if (lastSent === today) return;
+
+      // Collect all pending todos
+      const data = loadFromStorageSync();
+      const pendingTodos = data.customTodos.filter(t => !t.completed);
+
+      if (pendingTodos.length === 0) return;
+
+      // Build notification body
+      const maxShow = 5;
+      let body = `你还有 ${pendingTodos.length} 个待办未完成：\n`;
+      pendingTodos.slice(0, maxShow).forEach((todo, i) => {
+        body += `${i + 1}. ${todo.text}\n`;
+      });
+      if (pendingTodos.length > maxShow) {
+        body += `...还有 ${pendingTodos.length - maxShow} 个`;
+      }
+
+      // Send notification
+      const notification = new Notification('📋 每日待办提醒', {
+        body: body.trim(),
+        icon: '📋',
+        tag: 'daily-reminder',
+        requireInteraction: true
+      });
+
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+
+      // Mark as sent today
+      localStorage.setItem(dailyKey, today);
+    }
+
+        if (sectionHasMatch) {
+          section.style.display = '';
+          section.classList.remove('collapsed');
+          hasVisibleItems = true;
+          
+           // If section title matches, show all subsections and items
+          if (sectionTitle.toLowerCase().includes(lowerQuery)) {
+             subsections.forEach(sub => {
+               sub.style.display = '';
+               sub.classList.remove('collapsed');
+               sub.querySelectorAll('.todo-item').forEach(i => i.style.display = 'flex');
+             });
+             directItems.forEach(i => i.style.display = 'flex');
+          }
+        } else {
+          section.style.display = 'none';
+        }
+      });
+      
+      noResults.style.display = hasVisibleItems ? 'none' : 'flex';
+    }
+
+    function highlightText(element, query) {
+      if (!element || !query) return;
+      
+      const text = element.textContent;
+      const lowerQuery = query.toLowerCase();
+      
+      if (!text.toLowerCase().includes(lowerQuery)) return;
+      
+      const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+      
+      if (element.classList.contains('todo-text')) {
+         // Safe way: walk text nodes
+         const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+         const nodes = [];
+         let node;
+         while(node = walker.nextNode()) nodes.push(node);
+         
+         nodes.forEach(node => {
+           // Skip if parent is already a highlight mark or is a badge
+           if (node.parentNode.tagName === 'MARK' || 
+               node.parentNode.classList.contains('custom-badge') || 
+               node.parentNode.classList.contains('todo-date')) return;
+
+           if (node.nodeValue && node.nodeValue.toLowerCase().includes(lowerQuery)) {
+             // Create a temporary wrapper
+             const span = document.createElement('span');
+             span.innerHTML = node.nodeValue.replace(regex, '<mark class="highlight">$1</mark>');
+             node.parentNode.replaceChild(span, node);
+           }
+         });
+      } else {
+        // For headers, simple replace is fine as they are leaf nodes usually
+        element.innerHTML = text.replace(regex, '<mark class="highlight">$1</mark>');
+      }
+    }
+
+    function clearHighlights() {
+      // 1. Find all highlights and remove mark tag but keep text
+      const highlights = document.querySelectorAll('mark.highlight');
+      highlights.forEach(mark => {
+        const parent = mark.parentNode;
+        while(mark.firstChild) {
+            parent.insertBefore(mark.firstChild, mark);
+        }
+        parent.removeChild(mark);
+        parent.normalize();
+      });
+      
+      // 2. Remove the wrapper spans we added in todo-text
+      // These are spans that have no class
+      const todoTexts = document.querySelectorAll('.todo-text');
+      todoTexts.forEach(textEl => {
+        // Get all spans
+        const spans = textEl.querySelectorAll('span');
+        spans.forEach(span => {
+            // If it's not a badge or date, and it has no class
+            if (!span.className && !span.classList.contains('custom-badge') && !span.classList.contains('todo-date')) {
+                 const parent = span.parentNode;
+                 while(span.firstChild) {
+                    parent.insertBefore(span.firstChild, span);
+                 }
+                 parent.removeChild(span);
+                 parent.normalize();
+            }
+        });
+      });
+    }
+
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
